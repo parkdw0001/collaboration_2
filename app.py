@@ -344,7 +344,7 @@ elif menu == "🌿 서울시 친환경 승용차 현황":
             ax_sales.text(1, max(sales_df['전체']) * 1.05, '국산', ha='center', fontsize=13, fontweight='bold', color='blue')
             ax_sales.text(4.5, max(sales_df['전체']) * 1.05, '수입', ha='center', fontsize=13, fontweight='bold', color='darkred')
 
-            ax_sales.set_title('2025년 국내 자동차 판매 TOP6 브랜드\n전체 판매량 vs 친환경 비중 (국산·수입 구분)', fontsize=16, pad=25)
+            ax_sales.set_title('2025년 국내 자동차 판매 TOP3 브랜드\n전체 판매량 vs 친환경 비중 (국산·수입 구분)', fontsize=16, pad=25)
             ax_sales.set_xlabel('브랜드', fontsize=12)
             ax_sales.set_ylabel('판매량 (대)', fontsize=12)
             ax_sales.grid(axis='y', alpha=0.3, linestyle='--')
@@ -825,66 +825,10 @@ elif menu == "📹 서울시 CCTV의 현황":
             X, y, test_size=0.2, random_state=42, stratify=None
         )
 
-        # 모델 1: 선형 회귀
-        linear_model = LinearRegression()
-        linear_model.fit(X_train, y_train)
-        y_pred_linear = linear_model.predict(X_test)
-        r2_linear = r2_score(y_test, y_pred_linear)
-        mae_linear = mean_absolute_error(y_test, y_pred_linear)
-
-        # 모델 2: 다항 회귀 (degree=2) - 비선형 관계 포착 강화
-        poly_model = make_pipeline(PolynomialFeatures(degree=2), LinearRegression())
-        poly_model.fit(X_train, y_train)
-        y_pred_poly = poly_model.predict(X_test)
-        r2_poly = r2_score(y_test, y_pred_poly)
-        mae_poly = mean_absolute_error(y_test, y_pred_poly)
-
-        # 모델 3: 다항 회귀 (degree=3) - 더 유연하게 (과적합 주의, 하지만 데이터 적어 시도)
-        poly3_model = make_pipeline(PolynomialFeatures(degree=3), LinearRegression())
-        poly3_model.fit(X_train, y_train)
-        y_pred_poly3 = poly3_model.predict(X_test)
-        r2_poly3 = r2_score(y_test, y_pred_poly3)
-        mae_poly3 = mean_absolute_error(y_test, y_pred_poly3)
-
-        # 모델 성능 비교 테이블
-        st.subheader("📊 모델 성능 비교")
-        comparison_df = pd.DataFrame({
-            '모델': ['선형 회귀', '다항 회귀 (2차)', '다항 회귀 (3차)'],
-            'R² (테스트)': [r2_linear, r2_poly, r2_poly3],
-            'MAE (테스트)': [mae_linear, mae_poly, mae_poly3]
-        }).round(4)
-
-        # 최고 성능 모델 인덱스 계산 (R²가 가장 높은 = 덜 나쁜)
-        best_idx = comparison_df['R² (테스트)'].idxmax()
-
-        # 스타일 적용: 최고 모델 행 전체를 강한 녹색으로 강조
-        def highlight_best_row(row):
-            return ['background-color: #d4edda; font-weight: bold' if row.name == best_idx else '' for _ in row]
-
-        styled_df = comparison_df.style\
-            .apply(highlight_best_row, axis=1)\
-            .format({'R² (테스트)': '{:.4f}', 'MAE (테스트)': '{:.1f}'})\
-            .highlight_min(subset=['MAE (테스트)'], color='lightblue')
-
-        st.dataframe(styled_df, use_container_width=True, hide_index=True)
-
-        # 최고 성능 모델 선택
-        models = [linear_model, poly_model, poly3_model]
-        model_names = ['선형 회귀', '다항 회귀 (2차)', '다항 회귀 (3차)']
-        best_model = models[best_idx]
-        best_model_name = model_names[best_idx]
-        best_r2 = comparison_df.loc[best_idx, 'R² (테스트)']
-
-        st.success(f"**최고 성능 모델: {best_model_name}** (R² = {best_r2:.4f} → 상대적으로 가장 우수)")
-
-        # 그래프: 산점도 + 최적 모델 예측 곡선
+        # 그래프: 산점도
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.scatter(df['사고건수'], df['CCTV'], color='darkorange', s=100, alpha=0.8, label='실제 데이터 (자치구)')
 
-        # 부드러운 예측 곡선
-        x_range = np.linspace(df['사고건수'].min(), df['사고건수'].max(), 300).reshape(-1, 1)
-        y_range = best_model.predict(x_range)
-        ax.plot(x_range.flatten(), y_range, color='blue', linewidth=3, label=f'{best_model_name} 예측')
 
         ax.set_title(f'서울 자치구별 사고건수 vs CCTV 개수 (2025년)', fontsize=14)
         ax.set_xlabel('사고건수')
@@ -892,16 +836,6 @@ elif menu == "📹 서울시 CCTV의 현황":
         ax.legend()
         ax.grid(True, alpha=0.3)
         st.pyplot(fig)
-        
-        # 미래/가상 예측
-        st.subheader("※ 사고건수에 따른 미래 예측 상세 데이터")
-        col1, col2 = st.columns(2)
-        with col1:
-            accidents_input = st.number_input(
-                "예상 사고건수를 입력해보세요~!", min_value=0, max_value=5000, value=1500, step=100
-            )
-            predicted_cctv = int(round(best_model.predict([[accidents_input]])[0]))
-            st.metric("예상되는 CCTV 댓수는?", f"{predicted_cctv}대")
         
         st.subheader("서울 자치구별 CCTV vs 교통사고 전체 추이 (2025년)")
 
