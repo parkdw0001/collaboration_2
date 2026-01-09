@@ -42,4 +42,11 @@
 <img width="571" height="488" alt="Image" src="https://github.com/user-attachments/assets/3a963085-3150-4a51-897c-caa517487c54" />
 
 
-## 기획안:
+## 설치 및 실행방법:
+○ 저장소 복사 : git@github.com:joojoo80/collaboration_2.git
+
+○ DB 추가 : car_dashboard.sql 파일로 DB 추가
+
+○ 모듈 설치 : pip install -r requirements.txt
+
+○ 실행 : streamlit run app.py
