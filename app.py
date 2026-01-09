@@ -498,7 +498,7 @@ elif menu == "⚡ 서울시 전기차 현황":
                 r2_test = r2_score(y_test, y_pred_test)
                 mae_test = mean_absolute_error(y_test, y_pred_test)
 
-                st.subheader("모델 성능 (훈련/테스트 분리)")
+                st.subheader("모델 성능 (LinearRegression)")
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.metric("R² (테스트)", f"{r2_test:.4f}")
