@@ -25,7 +25,18 @@
 ## Team: 
 박대원/이수빈/전영주
 
-## Stack: 
+## Stack:
+○ Frontend: Streamlit
+
+○ Backend: Python
+
+○ Data: Pandas, NumPy, scipy
+
+○ Visualization: Matplotlib.Plotly, Seaborn
+
+○ Modeling: scikit-learn, pmdarima
+
+○ Database: MySQL
 
 ## ERD:
 <img width="571" height="488" alt="Image" src="https://github.com/user-attachments/assets/3a963085-3150-4a51-897c-caa517487c54" />
